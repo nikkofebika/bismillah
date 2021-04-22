@@ -103,33 +103,6 @@ class Api extends Component {
                     </Col>
                     <Col md={8}>
                         <Tabel datas={this.state.datas} handleDelete={this.handleDelete} handleEdit={this.handleEdit} />
-                        {/* <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>ID</th>
-                                    <th>Author</th>
-                                    <th>Title</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.datas.map((data, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>{data.id}</td>
-                                            <td>{data.author}</td>
-                                            <td>{data.title}</td>
-                                            <td>
-                                                <button value={data.id} onClick={this.handleDelete}>Hapus</button>
-                                                <button value={data.id} onClick={this.handleEdit}>Edit</button>
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </Table> */}
                     </Col>
                 </Row>
             </Container>
