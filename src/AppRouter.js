@@ -4,33 +4,36 @@ import App from './App'
 import About from './components/pages/About'
 import Api from './components/pages/Api'
 import Contact from './components/pages/Contact'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Container, Form, FormControl, Nav, Navbar } from 'react-bootstrap'
+
 
 class AppRouter extends Component {
     render() {
         return (
             <Router>
-                <div>
-                    <nav>
-                        <ul>
-                            <li>
-                                <Link to="/">Home</Link>
-                            </li>
-                            <li>
-                                <Link to="/about">About</Link>
-                            </li>
-                            <li>
-                                <Link to="/contact">Contact</Link>
-                            </li>
-                            <li>
-                                <Link to="/api">Api</Link>
-                            </li>
-                        </ul>
-                    </nav>
+                <Container>
+                    <Navbar bg="light" expand="lg">
+                        <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="mr-auto">
+                                <Nav.Link href="#"><Link to="/">Home</Link></Nav.Link>
+                                <Nav.Link href="#"><Link to="/about">About</Link></Nav.Link>
+                                <Nav.Link href="#"><Link to="/contact">Contact</Link></Nav.Link>
+                                <Nav.Link href="#"><Link to="/api">Api</Link></Nav.Link>
+                            </Nav>
+                            <Form inline>
+                                <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+                                <Button variant="outline-success">Search</Button>
+                            </Form>
+                        </Navbar.Collapse>
+                    </Navbar>
                     <Route path="/" exact component={App} />
                     <Route path="/about" component={About} />
                     <Route path="/contact" component={Contact} />
                     <Route path="/api" component={Api} />
-                </div>
+                </Container>
             </Router>
         )
     }

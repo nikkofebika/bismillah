@@ -1,5 +1,8 @@
 import axios from 'axios';
 import React, { Component } from 'react'
+import Tabel from "./Tabel";
+import Formulir from "./Formulir";
+import { Container, Col, Row, Form } from 'react-bootstrap';
 
 class Api extends Component {
     constructor() {
@@ -10,7 +13,8 @@ class Api extends Component {
                 title: '',
                 author: ''
             },
-            datas: []
+            datas: [],
+            edit: false
         }
     }
 
@@ -19,16 +23,27 @@ class Api extends Component {
         this.getDatas();
     }
 
+    clearForm = () => {
+        let newDataPost = { ...this.state.dataPost }
+        newDataPost['id'] = '';
+        newDataPost['title'] = '';
+        newDataPost['author'] = '';
+        this.setState({
+            dataPost: newDataPost
+        })
+    }
+
     getDatas = () => {
         axios.get('http://localhost:3004/posts').then(res => {
             this.setState({
-                datas: res.data
+                datas: res.data,
+                edit: false
             })
         })
     }
 
-    handleDelete = (e) => {
-        fetch(`http://localhost:3004/posts/${e.target.value}`, {
+    handleDelete = (id) => {
+        fetch(`http://localhost:3004/posts/${id}`, {
             method: 'DELETE',
         }).then(res => {
             if (res.statusText === 'OK') {
@@ -39,7 +54,9 @@ class Api extends Component {
 
     handleChange = (e) => {
         let newDataPost = { ...this.state.dataPost }
-        newDataPost['id'] = new Date().getTime();
+        if (!this.state.edit) {
+            newDataPost['id'] = new Date().getTime();
+        }
         newDataPost[e.target.name] = e.target.value;
         this.setState({
             dataPost: newDataPost
@@ -47,37 +64,75 @@ class Api extends Component {
     }
 
     handleSubmitForm = () => {
-        axios.post('http://localhost:3004/posts', this.state.dataPost).then(res => {
-            if (res.statusText === 'Created') {
-                this.getDatas();
+        if (this.state.edit === false) {
+            axios.post('http://localhost:3004/posts', this.state.dataPost).then(res => {
+                if (res.statusText === 'Created') {
+                    this.getDatas();
+                }
+            })
+        } else {
+            axios.put(`http://localhost:3004/posts/${this.state.dataPost.id}`, this.state.dataPost).then(res => {
+                if (res.statusText === 'OK') {
+                    this.getDatas();
+                }
+            })
+        }
+        this.clearForm()
+    }
+
+    handleEdit = (id) => {
+        axios.get(`http://localhost:3004/posts/${id}`).then(res => {
+            if (res.statusText === 'OK') {
+                this.setState({
+                    dataPost: res.data,
+                    edit: true
+                })
             }
         })
     }
 
     render() {
         return (
-            <div>
-                <h2>Data Artikel</h2>
-                <div style={{ border: '1px solid black', marginBottom: '5px', padding: '10px', borderRadius: '4px' }}>
-                    <div>
-                        <input type="text" name="author" placeholder="Author" onChange={this.handleChange} />
-                    </div>
-                    <div>
-                        <input type="text" name="title" placeholder="Title" onChange={this.handleChange} />
-                    </div>
-                    <button onClick={this.handleSubmitForm}>Submit</button>
-                </div>
-                {this.state.datas.map((data, index) => {
-                    return (
-                        <div key={index} style={{ background: 'aqua', padding: '10px', marginBottom: '5px' }}>
-                            <p>ID : {data.id}</p>
-                            <p>Author : {data.author}</p>
-                            <p>Title : {data.title}</p>
-                            <button value={data.id} onClick={this.handleDelete}>Hapus</button>
-                        </div>
-                    )
-                })}
-            </div>
+            <Container>
+                <Row>
+                    <Col><h2>Bermain API</h2></Col>
+                </Row>
+                <Row>
+                    <Col md={4}>
+                        <Formulir {...this.state.dataPost} handleChange={this.handleChange} handleSubmitForm={this.handleSubmitForm} />
+                    </Col>
+                    <Col md={8}>
+                        <Tabel datas={this.state.datas} handleDelete={this.handleDelete} handleEdit={this.handleEdit} />
+                        {/* <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ID</th>
+                                    <th>Author</th>
+                                    <th>Title</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.datas.map((data, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{index + 1}</td>
+                                            <td>{data.id}</td>
+                                            <td>{data.author}</td>
+                                            <td>{data.title}</td>
+                                            <td>
+                                                <button value={data.id} onClick={this.handleDelete}>Hapus</button>
+                                                <button value={data.id} onClick={this.handleEdit}>Edit</button>
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </Table> */}
+                    </Col>
+                </Row>
+            </Container>
         )
     }
 }
